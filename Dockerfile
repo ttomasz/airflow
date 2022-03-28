@@ -1288,7 +1288,7 @@ ENV AIRFLOW_PIP_VERSION=${AIRFLOW_PIP_VERSION} \
 
 # Copy all scripts required for installation - changing any of those should lead to
 # rebuilding from here
-COPY --link --from=scripts --chown=airflow:0 common.sh install_pip_version.sh \
+COPY --link --from=scripts common.sh install_pip_version.sh \
      install_airflow_dependencies_from_branch_tip.sh /scripts/docker/
 
 # In case of Production build image segment we want to pre-install main version of airflow
@@ -1304,7 +1304,7 @@ RUN bash /scripts/docker/install_pip_version.sh; \
         bash /scripts/docker/install_airflow_dependencies_from_branch_tip.sh; \
     fi
 
-COPY --link --from=scripts --chown=airflow:0 compile_www_assets.sh prepare_node_modules.sh /scripts/docker/
+COPY --link --from=scripts compile_www_assets.sh prepare_node_modules.sh /scripts/docker/
 COPY --chown=airflow:0 ${AIRFLOW_SOURCES_WWW_FROM} ${AIRFLOW_SOURCES_WWW_TO}
 
 # hadolint ignore=SC2086, SC2010
@@ -1348,7 +1348,7 @@ ENV ADDITIONAL_PYTHON_DEPS=${ADDITIONAL_PYTHON_DEPS} \
 
 WORKDIR /opt/airflow
 
-COPY --link --from=scripts --chown=airflow:0 install_from_docker_context_files.sh install_airflow.sh \
+COPY --link --from=scripts install_from_docker_context_files.sh install_airflow.sh \
      install_additional_dependencies.sh /scripts/docker/
 
 # hadolint ignore=SC2086, SC2010
@@ -1497,11 +1497,11 @@ RUN bash /scripts/docker/install_mysql.sh prod \
     && find "${AIRFLOW_HOME}" -executable -print0 | xargs --null chmod g+x \
     && find "${AIRFLOW_USER_HOME_DIR}" -executable -print0 | xargs --null chmod g+x
 
-COPY --link --from=airflow-build-image --chown=airflow:0 \
+COPY --from=airflow-build-image --chown=airflow:0 \
      "${AIRFLOW_USER_HOME_DIR}/.local" "${AIRFLOW_USER_HOME_DIR}/.local"
-COPY --link --from=scripts --chown=airflow:0 entrypoint_prod.sh /entrypoint
-COPY --link --from=scripts --chown=airflow:0 clean-logs.sh /clean-logs
-COPY --link --from=scripts --chown=airflow:0 airflow-scheduler-autorestart.sh /airflow-scheduler-autorestart
+COPY --link --from=scripts entrypoint_prod.sh /entrypoint
+COPY --link --from=scripts clean-logs.sh /clean-logs
+COPY --link --from=scripts airflow-scheduler-autorestart.sh /airflow-scheduler-autorestart
 
 # Make /etc/passwd root-group-writeable so that user can be dynamically added by OpenShift
 # See https://github.com/apache/airflow/issues/9248

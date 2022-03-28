@@ -48,6 +48,8 @@ Airflow 2.3
 
 * 2.3.0
 
+  * The maintenance (entrypoint/clean-logs etc) inside the image are now owned by root user which makes
+    them not modifiable by accident by airflow user.
   * Airflow 2.3 ``Dockerfile`` is now better optimized for caching and "standalone" which means that you
     can copy **just** the ``Dockerfile`` to any folder and start building custom images. This
     however requires `Buildkit <https://docs.docker.com/develop/develop-images/build_enhancements/>`_
